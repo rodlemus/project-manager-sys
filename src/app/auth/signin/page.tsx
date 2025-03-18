@@ -1,6 +1,7 @@
-import { signinAction } from "@/app/actions/auth/signin.action";
+import { signinAction } from "@/app/auth/actions/auth/signin.action";
 import CustomButton from "@/custom-components/Button/CustomButton";
 import CustomLabelInput from "@/custom-components/CustomLabelInput/CustomLabelInput";
+import Link from "next/link";
 
 export default function SignIn() {
   return (
@@ -35,9 +36,7 @@ export default function SignIn() {
         </form>
         <p className="mt-4 text-center text-sm text-gray-800">
           ¿No tienes una cuenta?{" "}
-          <a href="#" className="text-blue-600 hover:underline">
-            Regístrate
-          </a>
+          <Link href="/auth/signup" className="text-blue-600 hover:underline">Registrate</Link>
         </p>
       </div>
     </div>
