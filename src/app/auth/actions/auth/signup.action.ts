@@ -1,19 +1,24 @@
-import { createClient } from "@/utils/supabase/server"
-import { revalidatePath } from "next/cache"
-import { redirect } from "next/navigation"
+import { createClient } from "@/utils/supabase/server";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 
-const SignupSchema = z.object({
-  name: z.string().max(50),
-  email: z.string().email({ message: "Ingresa un email valido." }),
-  password: z.string().min(6),
-  passwordConfirmation: z.string().min(6)
-}).refine((data) => {
-  return data.password === data.passwordConfirmation
-}, {
-  message: "Las contraseñas no coinciden",
-  path: ["passwordConfirmation"]
-});
+const SignupSchema = z
+  .object({
+    name: z.string().max(50),
+    email: z.string().email({ message: "Ingresa un email valido." }),
+    password: z.string().min(6),
+    passwordConfirmation: z.string().min(6),
+  })
+  .refine(
+    (data) => {
+      return data.password === data.passwordConfirmation;
+    },
+    {
+      message: "Las contraseñas no coinciden",
+      path: ["passwordConfirmation"],
+    }
+  );
 
 export async function signupAction(formData: FormData) {
   "use server";
@@ -30,22 +35,22 @@ export async function signupAction(formData: FormData) {
     return;
   }
 
-  
   const supabase = await createClient();
 
-  const {error} = await supabase.auth.signUp({
+  const { error } = await supabase.auth.signUp({
     email: validFields.data.email,
     password: validFields.data.password,
-  })
+    options: {
+      data: {
+        name: validFields.data.name,
+      },
+    },
+  });
 
   if (!error) {
-    const {error} = await supabase.from("users_info").insert({name: validFields.data.name})
-    if (error) {
-      redirect('/error')
-    }
-    return;
+    redirect("/error");
   }
 
-  revalidatePath('/auth/signin', 'layout')
-  redirect('/auth/signin')
+  revalidatePath("/auth/signin", "layout");
+  redirect("/auth/signin");
 }
