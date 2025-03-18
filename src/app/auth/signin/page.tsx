@@ -1,3 +1,4 @@
+import { signinAction } from "@/app/actions/auth/signin.action";
 import CustomButton from "@/custom-components/Button/CustomButton";
 import CustomLabelInput from "@/custom-components/CustomLabelInput/CustomLabelInput";
 
@@ -8,7 +9,7 @@ export default function SignIn() {
         <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
           Iniciar Sesión
         </h1>
-        <form className="space-y-4">
+        <form className="space-y-4" action={signinAction}>
           <CustomLabelInput
             label="Correo Electrónico"
             type="email"
@@ -30,7 +31,7 @@ export default function SignIn() {
               ¿Olvidaste tu contraseña?
             </a>
           </div>
-          <CustomButton text="Iniciar Sesión" type="button" />
+          <CustomButton text="Iniciar Sesión" type="submit" />
         </form>
         <p className="mt-4 text-center text-sm text-gray-800">
           ¿No tienes una cuenta?{" "}
