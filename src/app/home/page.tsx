@@ -6,13 +6,14 @@ export default function Home() {
   return (
     <SidebarProvider>
       <div className="flex min-h-screen bg-gray-100">
+        
         {/* Sidebar */}
         <CustomSidebar />
-        <div>
-          <div>
-            <span className="text-black font-semibold">
+        <div className="w-full h-full">
+          <div className="flex h-10 bg-black w-full items-center justify-between px-6 py-8">
+            <span className="text-white font-semibold">
               Project Manager System
-            </span>{" "}
+            </span>
             <SidebarToggle></SidebarToggle>
           </div>
           {/* Main Content */}

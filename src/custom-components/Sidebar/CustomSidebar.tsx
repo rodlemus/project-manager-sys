@@ -5,7 +5,17 @@ import { useSidebar } from "./SidebarProvider";
 export function CustomSidebar() {
   const ctx = useSidebar();
   return (
-    <aside className={`w-64 bg-white shadow-md p-4 ${ctx?.isOpen ? "translate-x-0" : "d-none -translate-x-full"}`}>
+    <div>
+      {/* Overlay: Fondo oscuro que cierra la sidebar al hacer clic */}
+    {ctx?.isOpen && (
+      <div
+        className="fixed inset-0 bg-black/30 bg-opacity-50 transition-opacity duration-300"
+        onClick={() => ctx?.setIsOpen(false)} // Cierra la sidebar al hacer clic fuera
+      ></div>
+    )}
+    <aside className={`w-64 bg-white shadow-md p-4 fixed top-0 left-0 h-full transition-transform duration-300 ease-in-out ${
+      ctx?.isOpen ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"
+    }`}>
       <h1 className="text-xl font-bold text-gray-700">Dashboard</h1>
       <nav className="mt-4">
         <ul className="space-y-2">
@@ -36,5 +46,6 @@ export function CustomSidebar() {
         </ul>
       </nav>
     </aside>
+    </div>
   );
 }
