@@ -1,3 +1,6 @@
+import { createClient } from "@/utils/supabase/server";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 
 const SigninSchema = z.object({
@@ -5,18 +8,33 @@ const SigninSchema = z.object({
   password: z.string(),
 });
 
-export async function signinAction(params: FormData): Promise<void> {
+export async function signinAction(formData: FormData): Promise<void> {
   "use server";
   const validFields = SigninSchema.safeParse({
-    email: params.get("email") as string,
-    password: params.get("password") as string,
+    email: formData.get("email") as string,
+    password: formData.get("password") as string,
   });
 
   if (!validFields.success) {
-    validFields.error.flatten().fieldErrors;
+    console.log(validFields.error.flatten().fieldErrors);
     return;
   }
 
-  console.log("Valid fields", validFields.data);
-  return;
+  const supabase = await createClient();
+
+  // type-casting here for convenience
+  // in practice, you should validate your inputs
+  const data = {
+    email: formData.get("email") as string,
+    password: formData.get("password") as string,
+  };
+
+  const { error } = await supabase.auth.signInWithPassword(data);
+
+  if (error) {
+    redirect("/error");
+  }
+
+  revalidatePath("/home", "layout");
+  redirect("/home");
 }
