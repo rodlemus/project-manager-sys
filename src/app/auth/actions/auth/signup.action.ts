@@ -47,21 +47,15 @@ export async function signupAction(formData: FormData) {
     },
   });
 
-
   if (!data.user) {
     redirect("/error");
   }
 
-
-  if(data.user){
-    await supabase.from("users_info").insert({
-      name: validFields.data.name,
-      state: false,
-      user_id: data.user.id
-    })
-    revalidatePath("/auth/signin", "layout");
-    redirect("/auth/signin");
-  }
-
-  
+  await supabase.from("users_info").insert({
+    name: validFields.data.name,
+    state: false,
+    user_id: data.user.id,
+  });
+  revalidatePath("/auth/signin", "layout");
+  redirect("/auth/signin");
 }
