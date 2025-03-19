@@ -26,6 +26,7 @@ export type Database = {
       }
       project_messages: {
         Row: {
+          audience_id: string | null
           content: string
           created_at: string
           creator_id: string
@@ -35,6 +36,7 @@ export type Database = {
           title: string | null
         }
         Insert: {
+          audience_id?: string | null
           content: string
           created_at?: string
           creator_id: string
@@ -44,6 +46,7 @@ export type Database = {
           title?: string | null
         }
         Update: {
+          audience_id?: string | null
           content?: string
           created_at?: string
           creator_id?: string
@@ -53,6 +56,20 @@ export type Database = {
           title?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "project_messages_audience_id_fkey"
+            columns: ["audience_id"]
+            isOneToOne: false
+            referencedRelation: "project_messages_audience"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_messages_creator_id_fkey1"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "users_info"
+            referencedColumns: ["user_id"]
+          },
           {
             foreignKeyName: "project_messages_parent_id_fkey"
             columns: ["parent_id"]
@@ -69,73 +86,71 @@ export type Database = {
           },
         ]
       }
-      projects: {
+      project_messages_audience: {
         Row: {
-          created_at: string
           id: string
-          manager_id: string
           name: string
         }
         Insert: {
-          created_at?: string
           id?: string
-          manager_id: string
           name: string
         }
         Update: {
-          created_at?: string
           id?: string
-          manager_id?: string
           name?: string
         }
         Relationships: []
       }
-      role_permissions: {
+      project_users: {
         Row: {
-          id: number
-          permission_id: string
-          role_id: string
+          id: string
+          project_id: string
+          user_id: string
         }
         Insert: {
-          id?: number
-          permission_id: string
-          role_id: string
+          id?: string
+          project_id: string
+          user_id: string
         }
         Update: {
-          id?: number
-          permission_id?: string
-          role_id?: string
+          id?: string
+          project_id?: string
+          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "role_permissions_permission_id_fkey"
-            columns: ["permission_id"]
+            foreignKeyName: "project_users_project_id_fkey"
+            columns: ["project_id"]
             isOneToOne: false
-            referencedRelation: "permissions"
+            referencedRelation: "projects"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "role_permissions_permission_id_fkey1"
-            columns: ["permission_id"]
+            foreignKeyName: "project_users_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "permissions"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "role_permissions_role_id_fkey"
-            columns: ["role_id"]
-            isOneToOne: false
-            referencedRelation: "roles"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "role_permissions_role_id_fkey1"
-            columns: ["role_id"]
-            isOneToOne: false
-            referencedRelation: "roles"
-            referencedColumns: ["id"]
+            referencedRelation: "users_info"
+            referencedColumns: ["user_id"]
           },
         ]
+      }
+      projects: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
       }
       roles: {
         Row: {
@@ -207,23 +222,63 @@ export type Database = {
             referencedRelation: "task_states"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "tasks_user_designated_for_id_fkey1"
+            columns: ["user_designated_for_id"]
+            isOneToOne: false
+            referencedRelation: "users_info"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
+      user_role_permissions: {
+        Row: {
+          id: number
+          permission_id: string
+          user_role_id: string
+        }
+        Insert: {
+          id?: number
+          permission_id: string
+          user_role_id: string
+        }
+        Update: {
+          id?: number
+          permission_id?: string
+          user_role_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_role_permissions_permission_id_fkey"
+            columns: ["permission_id"]
+            isOneToOne: false
+            referencedRelation: "permissions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_role_permissions_user_role_id_fkey"
+            columns: ["user_role_id"]
+            isOneToOne: false
+            referencedRelation: "user_roles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       user_roles: {
         Row: {
-          id: number
-          role_id: string | null
-          user_id: string | null
+          id: string
+          role_id: string
+          user_id: string
         }
         Insert: {
-          id?: number
-          role_id?: string | null
-          user_id?: string | null
+          id?: string
+          role_id: string
+          user_id: string
         }
         Update: {
-          id?: number
-          role_id?: string | null
-          user_id?: string | null
+          id?: string
+          role_id?: string
+          user_id?: string
         }
         Relationships: [
           {
@@ -233,23 +288,33 @@ export type Database = {
             referencedRelation: "roles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "user_roles_user_id_fkey1"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users_info"
+            referencedColumns: ["user_id"]
+          },
         ]
       }
       users_info: {
         Row: {
           id: string
           name: string
-          user_id: string | null
+          state: boolean
+          user_id: string
         }
         Insert: {
           id?: string
           name: string
-          user_id?: string | null
+          state?: boolean
+          user_id: string
         }
         Update: {
           id?: string
           name?: string
-          user_id?: string | null
+          state?: boolean
+          user_id?: string
         }
         Relationships: []
       }

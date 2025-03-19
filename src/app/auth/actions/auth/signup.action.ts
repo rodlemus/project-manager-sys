@@ -37,7 +37,7 @@ export async function signupAction(formData: FormData) {
 
   const supabase = await createClient();
 
-  const { error } = await supabase.auth.signUp({
+  const { error, data } = await supabase.auth.signUp({
     email: validFields.data.email,
     password: validFields.data.password,
     options: {
@@ -47,10 +47,21 @@ export async function signupAction(formData: FormData) {
     },
   });
 
-  if (!error) {
+
+  if (!data.user) {
     redirect("/error");
   }
 
-  revalidatePath("/auth/signin", "layout");
-  redirect("/auth/signin");
+
+  if(data.user){
+    await supabase.from("users_info").insert({
+      name: validFields.data.name,
+      state: false,
+      user_id: data.user.id
+    })
+    revalidatePath("/auth/signin", "layout");
+    redirect("/auth/signin");
+  }
+
+  
 }
