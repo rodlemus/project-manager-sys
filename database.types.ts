@@ -64,11 +64,11 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "project_messages_creator_id_fkey1"
+            foreignKeyName: "project_messages_creator_id_fkey"
             columns: ["creator_id"]
             isOneToOne: false
             referencedRelation: "users_info"
-            referencedColumns: ["user_id"]
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "project_messages_parent_id_fkey"
@@ -126,11 +126,11 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "project_users_user_id_fkey"
+            foreignKeyName: "project_users_user_id_fkey1"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users_info"
-            referencedColumns: ["user_id"]
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -173,7 +173,7 @@ export type Database = {
           name: string
         }
         Insert: {
-          id: string
+          id?: string
           name: string
         }
         Update: {
@@ -187,7 +187,7 @@ export type Database = {
           created_at: string
           id: number
           project_id: string
-          state_id: string
+          status: Database["public"]["Enums"]["task_status"] | null
           title: string
           user_designated_for_id: string | null
         }
@@ -195,7 +195,7 @@ export type Database = {
           created_at?: string
           id?: number
           project_id: string
-          state_id: string
+          status?: Database["public"]["Enums"]["task_status"] | null
           title: string
           user_designated_for_id?: string | null
         }
@@ -203,7 +203,7 @@ export type Database = {
           created_at?: string
           id?: number
           project_id?: string
-          state_id?: string
+          status?: Database["public"]["Enums"]["task_status"] | null
           title?: string
           user_designated_for_id?: string | null
         }
@@ -216,34 +216,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "tasks_state_id_fkey"
-            columns: ["state_id"]
-            isOneToOne: false
-            referencedRelation: "task_states"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tasks_user_designated_for_id_fkey1"
+            foreignKeyName: "tasks_user_designated_for_id_fkey"
             columns: ["user_designated_for_id"]
             isOneToOne: false
             referencedRelation: "users_info"
-            referencedColumns: ["user_id"]
+            referencedColumns: ["id"]
           },
         ]
       }
       user_role_permissions: {
         Row: {
-          id: number
+          id: string
           permission_id: string
           user_role_id: string
         }
         Insert: {
-          id?: number
+          id?: string
           permission_id: string
           user_role_id: string
         }
         Update: {
-          id?: number
+          id?: string
           permission_id?: string
           user_role_id?: string
         }
@@ -289,11 +282,11 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "user_roles_user_id_fkey1"
+            foreignKeyName: "user_roles_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users_info"
-            referencedColumns: ["user_id"]
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -302,19 +295,16 @@ export type Database = {
           id: string
           name: string
           state: boolean
-          user_id: string
         }
         Insert: {
-          id?: string
+          id: string
           name: string
           state?: boolean
-          user_id: string
         }
         Update: {
           id?: string
           name?: string
           state?: boolean
-          user_id?: string
         }
         Relationships: []
       }
@@ -326,7 +316,12 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      task_status:
+        | "pendiente"
+        | "en_progreso"
+        | "bloqueado"
+        | "en_revision"
+        | "completado"
     }
     CompositeTypes: {
       [_ in never]: never
