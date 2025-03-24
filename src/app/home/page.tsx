@@ -1,12 +1,14 @@
 import { CustomSidebar } from "@/custom-components/Sidebar/CustomSidebar";
 import { SidebarProvider } from "@/custom-components/Sidebar/SidebarProvider";
 import SidebarToggle from "@/custom-components/Sidebar/SidebarToggle";
+import { useUserPermissions } from "@/hooks/useUserPermissions";
+import { use } from "react";
 
 export default function Home() {
+  const data = useUserPermissions();
   return (
     <SidebarProvider>
       <div className="flex min-h-screen bg-gray-100">
-        
         {/* Sidebar */}
         <CustomSidebar />
         <div className="w-full h-full">
