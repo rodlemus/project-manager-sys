@@ -35,8 +35,8 @@ export const useUserPermissions = async (
     )
   );
 
+  //no hay permisos asignados
   if (permissionIds.length === 0) {
-    console.log("No hay permisos asociados.");
     return false;
   }
 
@@ -47,7 +47,7 @@ export const useUserPermissions = async (
 
   if (permissionsError) {
     console.error("Error obteniendo permisos:", permissionsError);
-    return;
+    return false;
   }
   const permissionsName = permissions.map((permission) => permission.name);
   return permissionsName;
