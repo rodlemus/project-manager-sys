@@ -5,13 +5,9 @@ import { redirect } from "next/navigation";
 // y se obtendran los permisos del usuario
 // asi al modificar los permisos desde la base de datos, se reflejaran en la aplicacion
 export const useUserPermissions = async (
-  requiredPermissions: string[]
+  requiredPermission: string
 ): Promise<boolean> => {
   const supabaseClient = await createClient();
-  const user = await supabaseClient.auth.getUser();
-  if (user.error) {
-    redirect("/auth/signin");
-  }
 
   // obtenemos todos los ids de los permisos que tiene el usuario
   // se hace un innner join, iniciadno desde la tabla users_info, luego se hace un join con la tabla user_roles
@@ -19,7 +15,7 @@ export const useUserPermissions = async (
   const response = await supabaseClient
     .from("users_info")
     .select(
-      "id, user:user_roles!user_id( user_role_permissions(permission_id), user_id, role_id)"
+      "id, role_id:user_roles!user_id( user_role_permissions(permission_id), user_id, role_id)"
     );
 
   if (response.error) {
@@ -29,8 +25,8 @@ export const useUserPermissions = async (
   }
 
   // Extraer todos los permission_id
-  const permissionIds = response.data.flatMap((user) =>
-    user.user.flatMap((role) =>
+  const permissionIds = response.data.flatMap((data) =>
+    data.role_id.flatMap((role) =>
       role.user_role_permissions.map((p) => p.permission_id)
     )
   );
@@ -50,5 +46,6 @@ export const useUserPermissions = async (
     return false;
   }
   const permissionsName = permissions.map((permission) => permission.name);
-  return permissionsName;
+  const userHavePermission = permissionsName.includes(requiredPermission);
+  return userHavePermission;
 };

@@ -16,7 +16,6 @@ export async function signinAction(formData: FormData): Promise<void> {
   });
 
   if (!validFields.success) {
-    console.log(validFields.error.flatten().fieldErrors);
     return;
   }
 

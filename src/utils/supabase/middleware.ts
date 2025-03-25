@@ -49,7 +49,6 @@ export async function updateSession(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/auth/signin";
     
-    //se desactiva para desarrollo
     //return NextResponse.redirect(url);
   }
 
