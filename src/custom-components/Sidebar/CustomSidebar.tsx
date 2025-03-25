@@ -1,8 +1,9 @@
 "use client";
 import Link from "next/link";
 import { useSidebar } from "./SidebarProvider";
+import { IRoute } from "@/app/home/services/getRoutesByRole";
 
-export function CustomSidebar({urls}:{urls:string[]}) {
+export function CustomSidebar({ urls }: { urls: IRoute[] }) {
   const ctx = useSidebar();
   return (
     <div>
@@ -23,22 +24,14 @@ export function CustomSidebar({urls}:{urls:string[]}) {
         <h1 className="text-xl font-bold text-gray-700">Dashboard</h1>
         <nav className="mt-4">
           <ul className="space-y-2">
-            <li>
-              <a
-                href="/home"
-                className="block p-2 text-gray-600 hover:bg-gray-200 rounded"
-              >
-                Inicio
-              </a>
-            </li>
-            {urls.map((url) => {
+            {urls.map((route) => {
               return (
-                <li>
+                <li key={route.url}>
                   <a
-                    href={url}
+                    href={route.url}
                     className="block p-2 text-gray-600 hover:bg-gray-200 rounded"
                   >
-                    {url}
+                    {route.name}
                   </a>
                 </li>
               );
