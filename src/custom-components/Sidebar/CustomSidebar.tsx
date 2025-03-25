@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useSidebar } from "./SidebarProvider";
 import { IRoute } from "@/app/home/services/getRoutesByRole";
 
-export function CustomSidebar({ urls }: { urls: IRoute[] }) {
+export function CustomSidebar({ urls, username }: { urls: IRoute[], username:string }) {
   const ctx = useSidebar();
   return (
     <div>
@@ -21,7 +21,7 @@ export function CustomSidebar({ urls }: { urls: IRoute[] }) {
             : "-translate-x-full opacity-0"
         }`}
       >
-        <h1 className="text-xl font-bold text-gray-700">Dashboard</h1>
+        <h1 className="text-xl font-semibold text-gray-700">Buen día, <span className="capitalize">{username}</span></h1>
         <nav className="mt-4">
           <ul className="space-y-2">
             {urls.map((route) => {

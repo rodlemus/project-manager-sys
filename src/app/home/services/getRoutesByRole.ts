@@ -7,7 +7,7 @@ export interface IRoute {
 export const getRoutesByRole = (role: string): IRoute[] => {
   return role === APP_ROLES.ADMIN
     ? [
-        { name: "Inicio", url: "/home" },
+        { name: "Inicio", url: "/home/admin" },
         { name: "Usuarios", url: "/home/admin/users" },
         { name: "Proyectos", url: "/home/admin/projects" },
         { name: "Permisos", url: "/home/admin/permissions" },

@@ -1,14 +1,19 @@
 import { getUsersAdmin } from "./actions/getUsers";
+import CreateUserButton from "./components/CreateUserComponent";
 
 export default async function UsersPage() {
   const users = await getUsersAdmin();
+ 
   return (
     <div>
       <h2 className="text-2xl font-semibold text-gray-800">Usuarios</h2>
       <p className="text-gray-600 mt-2">
         Aquí puedes gestionar toda la información de los usuarios.
       </p>
-
+      <div className="w-full pt-2 flex flex-row-reverse">
+            
+            <CreateUserButton />
+      </div>
       <div className="mt-4">
         <table className="w-full">
           <thead className="text-black">
