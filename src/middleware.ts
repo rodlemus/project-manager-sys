@@ -1,16 +1,15 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "./utils/supabase/middleware";
 import { createClient } from "./utils/supabase/server";
-import { redirect } from "next/navigation";
-import { getRoleByUserId } from "./app/home/admin/users/actions/getUsers";
 import { APP_ROLES } from "./utils/models";
+import { getRoleNameByUserId } from "./app/home/admin/users/querys/getRoleNameByUserId";
 
 export async function middleware(request: NextRequest) {
   // proteger la ruta admin de los demas roles
   const supabaseClient = await createClient();
   const userAuth = await supabaseClient.auth.getUser();
   if (userAuth.data.user) {
-    const role = await getRoleByUserId(userAuth.data.user.id);
+    const role = await getRoleNameByUserId(userAuth.data.user.id);
 
     // si un usuario intenta ingresar al modulo de adminsitrador
     if (

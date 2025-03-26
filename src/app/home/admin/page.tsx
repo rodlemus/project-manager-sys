@@ -1,4 +1,3 @@
-import { getUsersAdmin } from "./users/actions/getUsers";
 
 export default async function AdminHome() {
   return (

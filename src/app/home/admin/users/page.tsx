@@ -1,12 +1,17 @@
 import CustomLabelInput from "@/custom-components/CustomLabelInput/CustomLabelInput";
-import { getUsersAdmin } from "./actions/getUsers";
-import CustomModalWithButton from "../../../../custom-components/modal-button/CustomModalWithButton";
-import { adminCreateNewUser } from "./actions/createNewUser";
+import { getUsersDistinctActualUser } from "./querys/getUsersDistinctActualUser";
+import CustomModalForm from "../../../../custom-components/modal-button/CustomModalWithButton";
+import { adminCreateNewUser } from "./querys/createNewUser";
 import CustomButton from "@/custom-components/Button/CustomButton";
+import { redirect } from "next/navigation";
 
 export default async function UsersPage() {
-  const users = await getUsersAdmin();
-
+  const users = await getUsersDistinctActualUser();
+  const actionNewUser = async (formdata:FormData) => {
+    "use server";
+    const result = await adminCreateNewUser(formdata);
+    redirect("/home/admin/users")
+  }
   return (
     <div>
       <h2 className="text-2xl font-semibold text-gray-800">Usuarios</h2>
@@ -14,14 +19,7 @@ export default async function UsersPage() {
         Aquí puedes gestionar toda la información de los usuarios.
       </p>
       <div className="w-full pt-2 flex flex-row-reverse">
-        <CustomModalWithButton showAcceptButton={false}>
-          <form
-            action={async (event) => {
-              "use server";
-              adminCreateNewUser(event);
-            }}
-            className="flex flex-col items-center justify-items-center space-y-2"
-          >
+        <CustomModalForm showAcceptButton={false} action={actionNewUser} textSubmitButton="Guardar" textOpenModalButton="Crear Usuario +">
             <CustomLabelInput
               label="Nombre: "
               type="text"
@@ -34,15 +32,13 @@ export default async function UsersPage() {
               placeholder=""
               name="email"
             />
-            <CustomLabelInput
-              label="Contraseña: "
-              type="password"
-              placeholder=""
-              name="password"
+            <CustomLabelInput 
+            label="Contraseña: "
+            type="password"
+            placeholder=""
+            name="password"
             />
-            <CustomButton text="Crear Usuario" type="submit" width="w-1/2" />
-          </form>
-        </CustomModalWithButton>
+        </CustomModalForm>
       </div>
       <div className="mt-4">
         <table className="w-full">

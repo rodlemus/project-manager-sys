@@ -17,7 +17,7 @@ export default function CustomModal({
   showAcceptButton = true,
 }: {
   children: ReactNode;
-  acceptHandler: () => void;
+  acceptHandler?: () => void;
   acceptTextButton: string;
   title: string;
   showAcceptButton?: boolean;
@@ -61,7 +61,11 @@ export default function CustomModal({
               {showAcceptButton && (
                 <button
                   type="button"
-                  onClick={acceptHandler}
+                  onClick={()=>{
+                    if(acceptHandler){
+                      acceptHandler()
+                    }
+                  }}
                   className="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-green-500 sm:ml-3 sm:w-auto"
                 >
                   {acceptTextButton}
