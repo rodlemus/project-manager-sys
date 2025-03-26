@@ -1,11 +1,28 @@
-'use client'
+"use client";
 
-import { ReactNode, useState } from 'react'
-import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
-import { useModal } from './ModalContext';
+import { ReactNode } from "react";
+import {
+  Dialog,
+  DialogBackdrop,
+  DialogPanel,
+  DialogTitle,
+} from "@headlessui/react";
+import { useModal } from "./ModalContext";
 
-export default function CustomModal({children, acceptHandler, acceptTextButton, title}:{children:ReactNode, acceptHandler: () => void, acceptTextButton:string, title:string}) {
-    const { isOpen, closeModal } = useModal(); 
+export default function CustomModal({
+  children,
+  acceptHandler,
+  acceptTextButton,
+  title,
+  showAcceptButton = true,
+}: {
+  children: ReactNode;
+  acceptHandler: () => void;
+  acceptTextButton: string;
+  title: string;
+  showAcceptButton?: boolean;
+}) {
+  const { isOpen, closeModal } = useModal();
 
   return (
     <Dialog open={isOpen} onClose={closeModal} className="relative z-10">
@@ -22,14 +39,14 @@ export default function CustomModal({children, acceptHandler, acceptTextButton, 
           >
             <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
               <div className="sm:flex sm:items-start">
-                
-                <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                  <DialogTitle as="h3" className="text-base font-semibold text-gray-900">
+                <div className="w-full mt-3 text-center sm:mt-0 sm:text-left">
+                  <DialogTitle
+                    as="h3"
+                    className="text-base font-semibold text-gray-900"
+                  >
                     {title}
                   </DialogTitle>
-                  <div className="mt-2">
-                    {children}
-                  </div>
+                  <div className="mt-2 w-full">{children}</div>
                 </div>
               </div>
             </div>
@@ -41,20 +58,19 @@ export default function CustomModal({children, acceptHandler, acceptTextButton, 
               >
                 Cancelar
               </button>
-              <button
-                type="button"
-                data-autofocus
-                onClick={() => {
-                    acceptHandler();
-                }}
-                className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-gray-50 sm:mt-0 sm:w-auto"
-              >
-                {acceptTextButton}
-              </button>
+              {showAcceptButton && (
+                <button
+                  type="button"
+                  onClick={acceptHandler}
+                  className="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-green-500 sm:ml-3 sm:w-auto"
+                >
+                  {acceptTextButton}
+                </button>
+              )}
             </div>
           </DialogPanel>
         </div>
       </div>
     </Dialog>
-  )
+  );
 }

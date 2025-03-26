@@ -1,9 +1,12 @@
+import CustomLabelInput from "@/custom-components/CustomLabelInput/CustomLabelInput";
 import { getUsersAdmin } from "./actions/getUsers";
-import CreateUserButton from "./components/CreateUserComponent";
+import CustomModalWithButton from "../../../../custom-components/modal-button/CustomModalWithButton";
+import { adminCreateNewUser } from "./actions/createNewUser";
+import CustomButton from "@/custom-components/Button/CustomButton";
 
 export default async function UsersPage() {
   const users = await getUsersAdmin();
- 
+
   return (
     <div>
       <h2 className="text-2xl font-semibold text-gray-800">Usuarios</h2>
@@ -11,8 +14,35 @@ export default async function UsersPage() {
         Aquí puedes gestionar toda la información de los usuarios.
       </p>
       <div className="w-full pt-2 flex flex-row-reverse">
-            
-            <CreateUserButton />
+        <CustomModalWithButton showAcceptButton={false}>
+          <form
+            action={async (event) => {
+              "use server";
+              adminCreateNewUser(event);
+            }}
+            className="flex flex-col items-center justify-items-center space-y-2"
+          >
+            <CustomLabelInput
+              label="Nombre: "
+              type="text"
+              placeholder=""
+              name="name"
+            />
+            <CustomLabelInput
+              label="Correo: "
+              type="email"
+              placeholder=""
+              name="email"
+            />
+            <CustomLabelInput
+              label="Contraseña: "
+              type="password"
+              placeholder=""
+              name="password"
+            />
+            <CustomButton text="Crear Usuario" type="submit" width="w-1/2" />
+          </form>
+        </CustomModalWithButton>
       </div>
       <div className="mt-4">
         <table className="w-full">
