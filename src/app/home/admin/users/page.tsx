@@ -12,6 +12,12 @@ export default async function UsersPage() {
     const result = await adminCreateNewUser(formdata);
     redirect("/home/admin/users")
   }
+
+  const actionDeleteUser = await (id:string) => {
+    const result = await fetch("/home/admin/users/delete",{method:"POST", body:JSON.stringify({
+      user_id
+    })})
+  }
   return (
     <div>
       <h2 className="text-2xl font-semibold text-gray-800">Usuarios</h2>
@@ -44,6 +50,7 @@ export default async function UsersPage() {
         <table className="w-full">
           <thead className="text-black">
             <tr>
+              <th>ID</th>
               <th>Nombre</th>
               <th>Rol</th>
               <th>Estado</th>
@@ -54,6 +61,9 @@ export default async function UsersPage() {
             {users.map((user) => {
               return (
                 <tr key={user.id} className="border-b border-gray-400 pb-1">
+                   <td className="text-center capitalize text-black">
+                    {user.id}
+                  </td>
                   <td className="text-center capitalize text-black">
                     {user.name}
                   </td>
