@@ -1,3 +1,4 @@
+"use client"
 import { useQuery } from "@tanstack/react-query";
 import { DeleteUserButton } from "./DeleteUserButton";
 import { getUsersDistinctActualUser, UsersTableData } from "../users/querys/getUsersDistinctActualUser";

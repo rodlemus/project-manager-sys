@@ -12,7 +12,6 @@ export default async function UsersPage() {
     redirect("/home/admin/users");
   };
 
-  
   return (
     <div>
       <h2 className="text-2xl font-semibold text-gray-800">Usuarios</h2>
