@@ -13,7 +13,7 @@ export default async function UsersPage() {
     redirect("/home/admin/users")
   }
 
-  const actionDeleteUser = await (id:string) => {
+  const actionDeleteUser = async (id:string) => {
     const result = await fetch("/home/admin/users/delete",{method:"POST", body:JSON.stringify({
       user_id
     })})
