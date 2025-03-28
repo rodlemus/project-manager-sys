@@ -1,6 +1,6 @@
 "use client"
 import { useQuery } from "@tanstack/react-query";
-import { DeleteUserButton } from "./DeleteUserButton";
+import { ChangeUserStateButton } from "./DeleteUserButton";
 import { getUsersDistinctActualUser, UsersTableData } from "../users/querys/getUsersDistinctActualUser";
 
 
@@ -42,7 +42,7 @@ export const TableUsersManagement = () =>{
                 Editar
               </button>
 
-              <DeleteUserButton user_id={user.id}/>
+              <ChangeUserStateButton user_id={user.id} state={!user.state} />
             </td>
           </tr>
         );

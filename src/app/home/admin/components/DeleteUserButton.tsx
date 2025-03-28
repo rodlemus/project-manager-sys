@@ -3,39 +3,57 @@ import CustomButton from "@/custom-components/Button/CustomButton";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import CustomModal from "@/custom-components/Modal/CustomModal";
 import { useModal } from "@/custom-components/Modal/ModalContext";
+import { useEffect } from "react";
 
-export const DeleteUserButton = ({ user_id }: { user_id: string }) => {
+export const ChangeUserStateButton = ({
+  user_id,
+  state,
+}: {
+  user_id: string;
+  state: boolean;
+}) => {
   const queryClient = useQueryClient();
   const { closeModal, openModal, isOpen } = useModal();
   const mutation = useMutation({
     mutationFn: async () => {
-      const result = await fetch("/home/admin/users/delete", {
-        method: "DELETE",
-        body: JSON.stringify({
-          user_id,
-        }),
-      });
-      return await result.json();
+        const result = await fetch("/home/admin/users/update-state", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user_id,
+            state,
+          }),
+        });
+        return await result.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
     },
   });
 
+  useEffect(() =>{
+    if(mutation.isSuccess){
+      openModal()
+    }
+  }, [mutation.isSuccess])
+
   return (
     <>
       <CustomButton
-        onClick={async () => {
-          const result = await mutation.mutateAsync();
-          console.log(mutation.error, mutation.data, result);
-          if (mutation.isSuccess) {
-            openModal();
-          }
+        onClick={() => {
+          mutation.mutate()
         }}
-        text="Inhabilitar"
+        text={state ? "Dar de alta" : "Dar de baja"}
         type="button"
         width="w-full"
-        className="bg-red-600 hover:bg-red-500/90 transition duration-300 p-2 rounded cursor-pointer"
+        className={
+          "transition duration-300 p-2 rounded cursor-pointer " +
+          (state
+            ? "bg-green-600 hover:bg-green-500/90"
+            : "bg-red-600 hover:bg-red-500/90")
+        }
       />
       <CustomModal
         showAcceptButton={false}
@@ -44,7 +62,7 @@ export const DeleteUserButton = ({ user_id }: { user_id: string }) => {
         closeModal={closeModal}
       >
         <h1 className="text-black font-semibold text-2xl text-center">
-          Usuario dado de BAJA con exito
+          Usuario dado de {!state ? "ALTA" : "BAJA"} con éxito.
         </h1>
       </CustomModal>
     </>
