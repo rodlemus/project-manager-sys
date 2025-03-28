@@ -4,7 +4,6 @@ import SidebarToggle from "@/custom-components/Sidebar/SidebarToggle";
 import { getUserData } from "../actions/getUserData";
 import { getNavbarColor } from "@/utils/navbarColor";
 import { getRoutesByRole } from "./services/getRoutesByRole";
-import { ModalProvider } from "@/custom-components/Modal/ModalContext";
 
 export default async function HomeLayout({
   children,
@@ -16,11 +15,10 @@ export default async function HomeLayout({
   const routes = getRoutesByRole(userInfo?.roleName || "");
 
   return (
-    <ModalProvider>
-<SidebarProvider>
+    <SidebarProvider>
       <div className="flex min-h-screen bg-gray-100">
         {/* Sidebar */}
-        <CustomSidebar urls={routes} username={userInfo?.name || ''} />
+        <CustomSidebar urls={routes} username={userInfo?.name || ""} />
         <div className="w-full h-full">
           <div
             className={`flex h-10 bg-black w-full items-center justify-between px-6 py-8 ${navbarColor}`}
@@ -35,6 +33,5 @@ export default async function HomeLayout({
         </div>
       </div>
     </SidebarProvider>
-    </ModalProvider>
   );
 }

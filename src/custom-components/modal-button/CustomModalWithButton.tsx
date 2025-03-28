@@ -2,7 +2,7 @@
 import CustomButton from "@/custom-components/Button/CustomButton";
 import CustomModal from "@/custom-components/Modal/CustomModal";
 import { useModal } from "@/custom-components/Modal/ModalContext";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 
 //Este componente ya incorpora el modal junto con el boton que lo activa, se le puede pasar cualquier input
 // es una combinacion de CustomModal y CustomButton para facilitar la creacion de modales con un boton que lo dispara
@@ -12,16 +12,16 @@ export default function CustomModalForm({
   showAcceptButton = true,
   action,
   textSubmitButton,
-  textOpenModalButton
+  textOpenModalButton,
 }: {
   children: ReactNode; // childrens donde pasamos los inputs que queramos en nuestro formulario
   acceptFn?: any; // hadnle que es llamado en el boton aceptar del custom modal
-  textSubmitButton:string; //texto para el botn submit del formulario,
+  textSubmitButton: string; //texto para el botn submit del formulario,
   textOpenModalButton: string;
   showAcceptButton?: boolean; // asi no renderizamos el boton aceptar para no ser redundante
   action?: string | undefined | ((formData: FormData) => void | Promise<void>); // se saca el tipado de la documentacionde nextJS
 }) {
-  const { openModal, closeModal } = useModal();
+  const { closeModal, openModal, isOpen } = useModal(); // se extraen las funciones del modal context
 
   return (
     <>
@@ -35,8 +35,13 @@ export default function CustomModalForm({
           }
         }}
         showAcceptButton={showAcceptButton}
+        isOpen={isOpen} // se le pasa el estado del modal
+        closeModal={closeModal} // se le pasa la funcion para cerrar el modal
       >
-        <form action={action} className="flex flex-col items-center justify-items-center space-y-2">
+        <form
+          action={action}
+          className="flex flex-col items-center justify-items-center space-y-2"
+        >
           {children}
           <CustomButton
             onClick={closeModal}

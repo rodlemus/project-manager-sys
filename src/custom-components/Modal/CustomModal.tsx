@@ -15,15 +15,17 @@ export default function CustomModal({
   acceptTextButton,
   title,
   showAcceptButton = true,
+  isOpen,
+  closeModal,
 }: {
-  children: ReactNode;
-  acceptHandler?: () => void;
-  acceptTextButton: string;
   title: string;
+  acceptHandler?: () => void;
+  children: ReactNode;
+  acceptTextButton?: string;
   showAcceptButton?: boolean;
+  isOpen: boolean;
+  closeModal: () => void;
 }) {
-  const { isOpen, closeModal } = useModal();
-
   return (
     <Dialog open={isOpen} onClose={closeModal} className="relative z-10">
       <DialogBackdrop
@@ -61,9 +63,9 @@ export default function CustomModal({
               {showAcceptButton && (
                 <button
                   type="button"
-                  onClick={()=>{
-                    if(acceptHandler){
-                      acceptHandler()
+                  onClick={() => {
+                    if (acceptHandler) {
+                      acceptHandler();
                     }
                   }}
                   className="inline-flex w-full justify-center rounded-md bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-green-500 sm:ml-3 sm:w-auto"
