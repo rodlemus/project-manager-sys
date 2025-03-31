@@ -1,11 +1,6 @@
 // queries/deleteProjects.ts
 import { createClient } from "@/utils/supabase/server";
 
-export interface DeleteProjectResponse {
-  error: string | null;
-  isSuccess: boolean;
-}
-
 // METODO PARA ELIMINAR UN PROYECTO
 export const deleteProject = async (projectId: string): Promise<boolean> => {
   "use server";
