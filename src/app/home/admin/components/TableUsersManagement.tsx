@@ -1,6 +1,6 @@
 "use client"
 import { useQuery } from "@tanstack/react-query";
-import { ChangeUserStateButton } from "./DeleteUserButton";
+import { ChangeUserStateButton } from "./ChangeUserStateButton";
 import { getUsersDistinctActualUser, UsersTableData } from "../users/querys/getUsersDistinctActualUser";
 
 
@@ -14,7 +14,7 @@ export const TableUsersManagement = () =>{
     return <table className="w-full">
     <thead className="text-black">
       <tr>
-        <th>ID</th>
+        {/* <th>ID</th> */}
         <th>Nombre</th>
         <th>Rol</th>
         <th>Estado</th>
@@ -25,14 +25,14 @@ export const TableUsersManagement = () =>{
       {data && data.map((user) => {
         return (
           <tr key={user.id} className="border-b border-gray-400 pb-1">
-            <td className="text-center capitalize text-black">
+            {/* <td className="text-center capitalize text-black">
               {user.id}
+            </td> */}
+            <td className="text-center capitalize text-black">
+              {user.username}
             </td>
             <td className="text-center capitalize text-black">
-              {user.name}
-            </td>
-            <td className="text-center capitalize text-black">
-              {user.role[0].name.name}
+              {user.role}
             </td>
             <td className="text-center capitalize text-black">
               {user.state ? "ACTIVE" : "INACTIVE"}

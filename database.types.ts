@@ -313,7 +313,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      admin_get_users: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          username: string
+          state: boolean
+          role: string
+        }[]
+      }
     }
     Enums: {
       task_status:
