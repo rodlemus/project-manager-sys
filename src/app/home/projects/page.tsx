@@ -1,4 +1,4 @@
-import { getProjects } from "./queries/getProjectsByUser";
+import { getProjects, getUserData } from "./queries/getProjectsByUser";
 import Modal from "./modals/Modal";
 import { createProjectByUser } from "./queries/createProjectByUser";
 import ModalEdit from "./modals/ModalEdit";
@@ -8,6 +8,17 @@ import { deleteProjectByUser } from "./queries/removeProjectByUser";
 
 const Projects = async () => {
   const { data: projects, isSuccess, error } = await getProjects();
+  const { userInfo, isSuccess: userSuccess } = await getUserData();
+
+  if (!userSuccess || !userInfo) {
+    return (
+      <p className="text-red-500">
+        Error: Usuario no encontrado o no autenticado.
+      </p>
+    );
+  }
+
+  const isProjectManager = userInfo.roleName === "PROJECT_MANAGER";
 
   if (!isSuccess) {
     return <p className="text-red-500">Error: {error}</p>;
@@ -47,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
 })
 `;
 
-const toggleDeleteModalScript = `
+  const toggleDeleteModalScript = `
 document.addEventListener('click', function(event) {
   if (event.target && event.target.classList.contains('deleteBtn')) {
     const projectId = event.target.getAttribute('data-id');
@@ -73,12 +84,14 @@ document.addEventListener('click', function(event) {
           <p className="text-black text-md my-2">
             Aqui puedes ver y gestionar tus proyectos
           </p>
-          <button
-            id="agregarBtn"
-            className="bg-green-600 text-white text-md px-4 py-2 rounded-lg hover:bg-green-500 hover:cursor-pointer"
-          >
-            Nuevo Proyecto
-          </button>
+          {isProjectManager && (
+            <button
+              id="agregarBtn"
+              className="bg-green-600 text-white text-md px-4 py-2 rounded-lg hover:bg-green-500 hover:cursor-pointer"
+            >
+              Nuevo Proyecto
+            </button>
+          )}
         </div>
       </div>
 
@@ -87,8 +100,12 @@ document.addEventListener('click', function(event) {
       <ModalDelete deleteProject={deleteProjectByUser} />
 
       <script dangerouslySetInnerHTML={{ __html: toggleModalScript }}></script>
-      <script dangerouslySetInnerHTML={{ __html: toggleEditModalScript }}></script>
-      <script dangerouslySetInnerHTML={{ __html: toggleDeleteModalScript }}></script>
+      <script
+        dangerouslySetInnerHTML={{ __html: toggleEditModalScript }}
+      ></script>
+      <script
+        dangerouslySetInnerHTML={{ __html: toggleDeleteModalScript }}
+      ></script>
 
       {projects.length === 0 ? (
         <p className="text-gray-600 mt-2">No tienes proyectos asignados.</p>
@@ -113,15 +130,28 @@ document.addEventListener('click', function(event) {
                     {project.name}
                   </td>
                   <td className="py-3 px-6 text-center">
-                    <button className="bg-slate-500 px-4 py-2 rounded-lg hover:cursor-pointer hover:bg-slate-400">
-                      Ver
+                    <button
+                      className="bg-slate-500 px-4 py-2 rounded-lg hover:cursor-pointer hover:bg-slate-400"
+                    >
+                      Ver detalles
                     </button>
-                    <button className="editBtn bg-blue-500 px-4 py-2 rounded-lg mx-4 hover:cursor-pointer hover:bg-blue-400" data-id={project.id} data-name={project.name}>
-                      Editar
-                    </button>
-                    <button className="deleteBtn bg-red-500 px-4 py-2 rounded-lg hover:cursor-pointer hover:bg-red-400" data-id={project.id}>
-                      Eliminar
-                    </button>
+                    {isProjectManager && (
+                      <>
+                        <button
+                          className="editBtn bg-blue-500 px-4 py-2 rounded-lg mx-4 hover:cursor-pointer hover:bg-blue-400"
+                          data-id={project.id}
+                          data-name={project.name}
+                        >
+                          Editar
+                        </button>
+                        <button
+                          className="deleteBtn bg-red-500 px-4 py-2 rounded-lg hover:cursor-pointer hover:bg-red-400"
+                          data-id={project.id}
+                        >
+                          Eliminar
+                        </button>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}
