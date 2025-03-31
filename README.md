@@ -1,4 +1,4 @@
-Team Members:
+## Team Members:
 - Eduardo Rodrigo Lemus Escalante         LE240440
 - Guillermo Alejandro Castillo Campos     CC242330
 
