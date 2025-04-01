@@ -5,7 +5,7 @@ export const getTaskByProject = async (projectId: string) => {
 
     const { data, error } = await supabaseClient
         .from('tasks')
-        .select("*")
+        .select("id, title, status")
         .eq('project_id', projectId);
 
     if(error) {
