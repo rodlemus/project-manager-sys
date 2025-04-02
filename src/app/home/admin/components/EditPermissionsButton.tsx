@@ -6,7 +6,13 @@ import { PermissionInputCheckBox } from "@/custom-components/PermissionInputChec
 import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
 
-export const EditPermissionsButton = ({ userId }: { userId: string }) => {
+export const EditPermissionsButton = ({
+  userId,
+  name,
+}: {
+  userId: string;
+  name: string;
+}) => {
   const { closeModal, openModal, isOpen } = useModal();
   const [data, setData] = useState<any[]>([]);
 
@@ -52,6 +58,10 @@ export const EditPermissionsButton = ({ userId }: { userId: string }) => {
         <div className="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-lg">
           <h2 className="text-xl font-semibold mb-4 text-gray-700">
             Permisos del Usuario
+            <br />
+            <span className="text-sm text-black">ID: {userId}</span>
+            <br />
+            <span className="text-sm text-black">Nombre: {name}</span>
           </h2>
           <table className="w-full border-collapse border border-gray-300">
             <thead>
