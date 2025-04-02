@@ -4,28 +4,34 @@ import CustomModal from "@/custom-components/Modal/CustomModal";
 import { useModal } from "@/custom-components/Modal/ModalContext";
 import { PermissionInputCheckBox } from "@/custom-components/PermissionInputCheckBox/PermissionInputCheckBox";
 import { createClient } from "@/utils/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 
 export const EditPermissionsButton = ({ userId }: { userId: string }) => {
   const { closeModal, openModal, isOpen } = useModal();
+  const [data, setData] = useState<any[]>([]);
 
-  const { data } = useQuery({
-    queryKey: ["getUserPermissions"],
-    queryFn: async () => {
-      const supbaseClient = await createClient();
-      const { data, error } = await supbaseClient.rpc(
+  useEffect(() => {
+    const fetchPermissions = async () => {
+      const supabaseClient = await createClient();
+      const { data, error } = await supabaseClient.rpc(
         "admin_get_user_permissions",
         {
           a_user_id: userId,
         }
       );
       if (error) {
-        return [];
+        console.error("Error fetching permissions:", error);
+        return null;
       }
-      return data;
-    },
-  });
+      setData(data);
+    };
 
+    fetchPermissions();
+
+    return () => {
+      setData([]); // Cleanup the data when the component unmounts
+    };
+  }, [userId]);
   return (
     <>
       <CustomButton
