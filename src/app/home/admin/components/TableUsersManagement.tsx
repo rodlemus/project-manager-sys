@@ -2,6 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { ChangeUserStateButton } from "./ChangeUserStateButton";
 import { getUsersDistinctActualUser, UsersTableData } from "../users/querys/getUsersDistinctActualUser";
+import { EditPermissionsButton } from "./EditPermissionsButton";
 
 
 export const TableUsersManagement = () =>{
@@ -38,10 +39,7 @@ export const TableUsersManagement = () =>{
               {user.state ? "ACTIVE" : "INACTIVE"}
             </td>
             <td className="w-full flex justify-center gap-2 py-2">
-              <button className="bg-blue-600 hover:bg-blue-500/90 transition duration-300 p-2 rounded cursor-pointer">
-                Editar
-              </button>
-
+              <EditPermissionsButton  userId={user.id}/>
               <ChangeUserStateButton user_id={user.id} state={!user.state} />
             </td>
           </tr>
