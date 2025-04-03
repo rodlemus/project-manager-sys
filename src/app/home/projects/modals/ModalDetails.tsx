@@ -27,6 +27,7 @@ const ModalDetails: React.FC<ModalDetailsProps> = ({
   const [messages, setMessages] = useState<Message[]>([]);
   const [isExpanded, setIsExpanded] = useState(false);
   const [title, setTitle] = useState("");
+  const [replyTo, setReplyTo] = useState<string | null>(null);
   const [content, setContent] = useState("");
 
   const inputRef = useRef<HTMLDivElement>(null);
@@ -78,7 +79,7 @@ const ModalDetails: React.FC<ModalDetailsProps> = ({
           project_id: projectId, // este project_id lo obtenemos automaticamente en el Backend
           title: title.trim() || null,
           content,
-          parent_id: null,
+          parent_id: replyTo,
         }),
       });
 
@@ -106,6 +107,7 @@ const ModalDetails: React.FC<ModalDetailsProps> = ({
       // Limpiar inputs
       setTitle("");
       setContent("");
+      setReplyTo(null);
       setIsExpanded(false);
     } catch (error) {
       console.error("❌ Error al enviar mensaje:", error);
@@ -114,17 +116,21 @@ const ModalDetails: React.FC<ModalDetailsProps> = ({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if(inputRef.current && !inputRef.current.contains(event.target as Node)) {
+      if (
+        inputRef.current &&
+        !inputRef.current.contains(event.target as Node) &&
+        !(event.target as HTMLElement).closest(".reply-box")
+      ) {
         setIsExpanded(false);
         setTitle("");
         setContent("");
+        setReplyTo(null);
       }
-    }
+    };
 
     document.addEventListener("mousedown", handleClickOutside);
 
-    return () => 
-      document.removeEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   return (
@@ -179,6 +185,29 @@ const ModalDetails: React.FC<ModalDetailsProps> = ({
                             {new Date(message.created_at).toLocaleDateString()}
                           </div>
                         </div>
+                        <button
+                          className="mt-2 text-blue-500 hover:underline text-sm hover:cursor-pointer"
+                          onClick={() => setReplyTo(message.id)}
+                        >
+                          Responder
+                        </button>
+                        {replyTo === message.id && (
+                          <div className="reply-box mt-2 ml-6 pl-3 border-l-4 rounded-lg">
+                            <textarea
+                              className="w-full p-2 border rounded-lg text-sm focus:outline-none text-indigo-900"
+                              rows={3}
+                              placeholder="Escribe tu respuesta..."
+                              value={content}
+                              onChange={(e) => setContent(e.target.value)}
+                            ></textarea>
+                            <button
+                              className="mt-2 bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-400"
+                              onClick={sendMessage}
+                            >
+                              Publicar Respuesta
+                            </button>
+                          </div>
+                        )}
                       </li>
                     ))}
                   </ul>
