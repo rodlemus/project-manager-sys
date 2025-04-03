@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 interface ModalDetailsProps {
   projectId: string;
@@ -14,7 +14,8 @@ interface Message {
   creator_id: string;
   parent_id: string | null;
   created_at: string;
-  replies: Message[]; // para las respuestas anidadas
+  creator_name: string;
+  replies: Message[]; // Para respuestas anidadas
 }
 
 const ModalDetails: React.FC<ModalDetailsProps> = ({
@@ -23,13 +24,16 @@ const ModalDetails: React.FC<ModalDetailsProps> = ({
 }) => {
   const [tasks, setTasks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
   const [messages, setMessages] = useState<Message[]>([]);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
+
+  const inputRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        // Simula la obtención de tareas (debes reemplazar esto con la llamada real a tu API)
         const response = await fetch(
           `/api/projects/tasks?projectId=${projectId}`
         );
@@ -52,7 +56,6 @@ const ModalDetails: React.FC<ModalDetailsProps> = ({
           `/api/projects/messages?projectId=${projectId}`
         );
         const data = await response.json();
-
         setMessages(data || []);
       } catch (error) {
         console.error("Error al obtener mensajes: ", error);
@@ -64,12 +67,73 @@ const ModalDetails: React.FC<ModalDetailsProps> = ({
     fetchMessages();
   }, [projectId]);
 
+  const sendMessage = async () => {
+    try {
+      const response = await fetch("/api/projects/messages/insert", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          project_id: projectId, // este project_id lo obtenemos automaticamente en el Backend
+          title: title.trim() || null,
+          content,
+          parent_id: null,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok)
+        throw new Error(data.error || "Error al enviar el mensaje");
+
+      console.log("✅ Mensaje enviado:", data);
+
+      // Actualizar mensajes después de enviar uno nuevo
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        {
+          id: data.data[0].id, // Asignamos el ID del mensaje recién creado
+          title: data.data[0]?.title || "", // No mostramos nada en caso de guardar un mensaje sin titulo
+          content,
+          creator_id: "",
+          parent_id: null,
+          created_at: new Date().toISOString(),
+          creator_name: "",
+          replies: [],
+        },
+      ]);
+
+      // Limpiar inputs
+      setTitle("");
+      setContent("");
+      setIsExpanded(false);
+    } catch (error) {
+      console.error("❌ Error al enviar mensaje:", error);
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if(inputRef.current && !inputRef.current.contains(event.target as Node)) {
+        setIsExpanded(false);
+        setTitle("");
+        setContent("");
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => 
+      document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-900/40 backdrop-blur-sm">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-9/12">
+      <div className="max-h-[90vh] bg-white p-6 rounded-lg shadow-lg w-9/12 relative">
         <h2 className="text-xl font-bold mb-4 text-gray-900">
           Tareas del Proyecto
         </h2>
+
         {loading ? (
           <p className="text-gray-800 my-2.5">Cargando...</p>
         ) : tasks.length > 0 ? (
@@ -96,27 +160,63 @@ const ModalDetails: React.FC<ModalDetailsProps> = ({
               {loading ? (
                 <p className="text-gray-800 my-2.5">Cargando...</p>
               ) : messages.length > 0 ? (
-                <ul className="space-y-4">
-                  {messages.map((message) => (
-                    <li
-                      key={message.id}
-                      className="bg-white shadow-md rounded-lg p-4 border border-gray-200"
-                    >
-                      <h3 className="text-lg font-semibold text-indigo-800">
-                        {message.title}
-                      </h3>
-                      <p className="text-gray-700 mt-2">{message.content}</p>
-                      <div className="text-right text-sm text-gray-500 mt-2">
-                        {new Date(message.created_at).toLocaleDateString()}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
+                <div className="overflow-y-auto max-h-[40vh]">
+                  <ul className="space-y-4">
+                    {messages.map((message) => (
+                      <li
+                        key={message.id}
+                        className="bg-white shadow-md rounded-lg p-4 border border-gray-200"
+                      >
+                        <h3 className="text-lg font-semibold text-indigo-800">
+                          {message.title || ""}
+                        </h3>
+                        <p className="text-gray-700 mt-2">{message.content}</p>
+                        <div className="flex justify-between items-center mt-4">
+                          <div className="text-sm text-gray-500 mt-2">
+                            <span>Enviado por: {message.creator_name}</span>
+                          </div>
+                          <div className="text-right text-sm text-gray-500 mt-2">
+                            {new Date(message.created_at).toLocaleDateString()}
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               ) : (
                 <p className="text-gray-800 text-center">
                   Este proyecto no tiene mensajes aún.
                 </p>
               )}
+
+              {/* Entrada de mensajes */}
+              <div ref={inputRef} className="mt-4 p-2 border rounded-lg">
+                <input
+                  type="text"
+                  className="w-full p-2 border rounded-lg text-sm focus:outline-none text-indigo-900 font-semibold"
+                  placeholder="Escribe un titulo para tu mensaje"
+                  onFocus={() => setIsExpanded(true)}
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
+                {isExpanded && (
+                  <div className="mt-2">
+                    <textarea
+                      className="w-full p-2 border text-sm rounded-lg focus:outline-none text-indigo-900"
+                      rows={3}
+                      placeholder="Escribe tu mensaje..."
+                      value={content}
+                      onChange={(e) => setContent(e.target.value)}
+                    ></textarea>
+                    <button
+                      className="mt-2 bg-indigo-500 text-white px-4 py-2 rounded-lg hover:bg-indigo-400"
+                      onClick={sendMessage}
+                    >
+                      Publicar
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         ) : (
@@ -127,31 +227,15 @@ const ModalDetails: React.FC<ModalDetailsProps> = ({
             </button>
           </div>
         )}
+
         <button
           onClick={closeModal}
-          className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-400"
+          className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-400 absolute left-4 bottom-4"
         >
           Cerrar
         </button>
       </div>
     </div>
-  );
-};
-
-// Componente para mostrar un mensaje con sus respuestas anidadas
-const MessageItem: React.FC<{ message: Message }> = ({ message }) => {
-  return (
-    <li className="border p-4 rounded-lg">
-      <h3 className="font-semibold">{message.title}</h3>
-      <p>{message.content}</p>
-      {message.replies.length > 0 && (
-        <ul className="ml-6 mt-2 border-l-2 border-gray-300 pl-3">
-          {message.replies.map((reply) => (
-            <MessageItem key={reply.id} message={reply} />
-          ))}
-        </ul>
-      )}
-    </li>
   );
 };
 

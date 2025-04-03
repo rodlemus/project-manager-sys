@@ -10,15 +10,34 @@ export const getMessagesByProject = async (projectId: string) => {
       return { data: [], isSuccess: false, error: "Project ID es requerido" };
     }
 
-    const { data: messages, error } = await supabaseClient
+    // Obtener los mensajes
+    const { data: messages, error: messageError } = await supabaseClient
       .from("project_messages")
       .select("id, title, content, creator_id, parent_id, created_at")
       .eq("project_id", projectId)
       .order("created_at", { ascending: true });
 
-    if (error) throw new Error(error.message);
+    if (messageError) throw new Error(messageError.message);
 
-    console.log("📩 Mensajes obtenidos:", messages);
+    // Obtener los nombres de los creadores
+    const creatorIds = messages.map((msg) => msg.creator_id);
+    const { data: creators, error: creatorError } = await supabaseClient
+      .from("users_info")
+      .select("id, name") // Usamos 'id' en lugar de 'user_id'
+      .in("id", creatorIds); // Filtrar por los IDs de los creadores
+
+    if (creatorError) throw new Error(creatorError.message);
+
+    // Asignar el nombre del creador a cada mensaje
+    const messagesWithCreator = messages.map((message) => {
+      const creator = creators.find(
+        (creator) => creator.id === message.creator_id
+      );
+      return {
+        ...message,
+        creator_name: creator ? creator.name : "Desconocido", // Asignamos el nombre
+      };
+    });
 
     // Construir estructura jerárquica de mensajes
     const buildMessageTree = (messages: any[]) => {
@@ -44,7 +63,7 @@ export const getMessagesByProject = async (projectId: string) => {
       return rootMessages;
     };
 
-    const structuredMessages = buildMessageTree(messages);
+    const structuredMessages = buildMessageTree(messagesWithCreator);
 
     return { data: structuredMessages, isSuccess: true };
   } catch (error) {
