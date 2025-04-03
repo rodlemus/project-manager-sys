@@ -2,8 +2,16 @@
 import Link from "next/link";
 import { useSidebar } from "./SidebarProvider";
 import { IRoute } from "@/app/home/services/getRoutesByRole";
+import CustomButton from "../Button/CustomButton";
+import { createClient } from "@/utils/supabase/client";
 
-export function CustomSidebar({ urls, username }: { urls: IRoute[], username:string }) {
+export function CustomSidebar({
+  urls,
+  username,
+}: {
+  urls: IRoute[];
+  username: string;
+}) {
   const ctx = useSidebar();
   return (
     <div>
@@ -21,7 +29,9 @@ export function CustomSidebar({ urls, username }: { urls: IRoute[], username:str
             : "-translate-x-full opacity-0"
         }`}
       >
-        <h1 className="text-xl font-semibold text-gray-700">Buen día, <span className="capitalize">{username}</span></h1>
+        <h1 className="text-xl font-semibold text-gray-700">
+          Buen día, <span className="capitalize">{username}</span>
+        </h1>
         <nav className="mt-4">
           <ul className="space-y-2">
             {urls.map((route) => {
@@ -37,12 +47,19 @@ export function CustomSidebar({ urls, username }: { urls: IRoute[], username:str
               );
             })}
             <li>
-              <Link
-                href="/auth/logout"
-                className="block p-2 text-white hover:bg-red-600/40 rounded bg-red-600/60"
-              >
-                Cerrar Sesión
-              </Link>
+              <CustomButton
+                width="w-full"
+                text="Cerrar sesión"
+                type="button"
+                className="cursor-pointer bg-red-600 hover:bg-red-500 transition duration-300"
+                onClick={async () => {
+                  const supbaseClient = await createClient();
+                  const {error} = await supbaseClient.auth.signOut();
+                  if (!error) {
+                    window.location.href = "/auth/signin";
+                  }
+                }}
+              />
             </li>
           </ul>
         </nav>
