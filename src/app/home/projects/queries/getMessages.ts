@@ -42,7 +42,7 @@ export const getMessagesByProject = async (projectId: string) => {
     // Construir estructura jerárquica de mensajes
     const buildMessageTree = (messages: any[]) => {
       const messageMap = new Map();
-      const rootMessages = [];
+      const rootMessages: any[] = [];
 
       messages.forEach((msg) => {
         msg.replies = [];
