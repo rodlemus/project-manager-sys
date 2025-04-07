@@ -35,12 +35,14 @@ export default function SignUp() {
             name="passwordConfirmation"
             placeholder="********"
           />
-          <CustomButton text="Registrarse" type="submit" />
+          <CustomButton width="w-full" text="Registrarse" type="submit" />
           <br />
           <p className="mt-4 text-center text-sm text-gray-800">
-          ¿Ya tienes una cuenta?{" "}
-          <Link href="/auth/signin" className="text-blue-600 hover:underline">Iniciar sesión</Link>
-        </p>
+            ¿Ya tienes una cuenta?{" "}
+            <Link href="/auth/signin" className="text-blue-600 hover:underline">
+              Iniciar sesión
+            </Link>
+          </p>
         </form>
       </div>
     </div>
