@@ -1,8 +1,8 @@
 import { createClient } from "@/utils/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function DELETE(request: NextRequest) {
-  const body: { user_id: string } = await request.json();
+export async function PUT(request: NextRequest) {
+  const body: { user_id: string, state:boolean } = await request.json();
   const supabase = await createClient();
   if (
     body.user_id === "" ||
@@ -17,7 +17,7 @@ export async function DELETE(request: NextRequest) {
 
   const { error, data } = await supabase
     .from("users_info")
-    .update({ state: false })
+    .update({ state: body.state })
     .eq("id", body.user_id);
 
   if (error) {

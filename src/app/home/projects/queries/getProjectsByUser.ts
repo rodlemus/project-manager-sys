@@ -66,3 +66,25 @@ export const getProjects = async () => {
     };
   }
 };
+
+// Definimos una interfaz que nos ayude a definir los valores de userInfo
+interface UserInfo {
+  id: string,
+  name: string,
+  roleName: string
+}
+
+// Funcion para obtener la informacion del usuario activo
+export const getUserData = async () => {
+  try {
+    const userInfo = await getUserDataWithId();
+    if (!userInfo) {
+      return { userInfo: null, isSuccess: false };
+    }
+
+    return { userInfo: userInfo as UserInfo, isSuccess: true }; // Asignamos el tipo explícitamente
+  } catch (error) {
+    console.error("❌ Error al obtener los datos del usuario:", error);
+    return { userInfo: null, isSuccess: false };
+  }
+};

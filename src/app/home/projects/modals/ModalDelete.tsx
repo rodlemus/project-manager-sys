@@ -1,36 +1,40 @@
-"use client"
+"use client";
 
 import { useRouter } from "next/navigation";
 
 interface ModalDeleteProps {
+  isOpen: boolean;
+  onClose: () => void;
+  projectId: string | null;
   deleteProject: (projectId: string) => Promise<boolean>;
 }
 
-const ModalDelete: React.FC<ModalDeleteProps> = ({ deleteProject }) => {
+const ModalDelete: React.FC<ModalDeleteProps> = ({
+  isOpen,
+  onClose,
+  projectId,
+  deleteProject,
+}) => {
   const router = useRouter();
-    
+
   const handleDelete = async () => {
-    const projectId =
-      document.getElementById("deleteModal")?.getAttribute("data-id") || "";
-  
-    if (projectId === "") {
+    if (!projectId) {
       alert("No se ha seleccionado un proyecto para eliminar.");
       return;
     }
-  
+
     const result = await deleteProject(projectId);
-  
+
     if (result) {
-      document.getElementById("deleteModal")?.classList.add("hidden");
+      onClose();
       router.refresh();
     }
   };
 
+  if (!isOpen) return null; // No renderizar si el modal está cerrado
+
   return (
-    <div
-      id="deleteModal"
-      className="hidden fixed inset-0 flex items-center justify-center z-50 bg-gray-900/40 backdrop-blur-sm"
-    >
+    <div className="fixed inset-0 flex items-center justify-center z-50 bg-gray-900/40 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 relative">
         {/* Modal Header */}
         <div className="flex items-center justify-between border-b pb-3">
@@ -38,11 +42,8 @@ const ModalDelete: React.FC<ModalDeleteProps> = ({ deleteProject }) => {
             Eliminar Proyecto
           </h3>
           <button
-            id="closeModal"
             className="p-2 rounded-full bg-gray-100 hover:bg-red-100 text-gray-500 hover:text-red-600 transition-all duration-300"
-            onClick={() =>
-              document.getElementById("deleteModal")?.classList.add("hidden")
-            }
+            onClick={onClose}
             aria-label="Cerrar"
           >
             ✖
@@ -56,9 +57,7 @@ const ModalDelete: React.FC<ModalDeleteProps> = ({ deleteProject }) => {
 
         <div className="mt-5 flex justify-evenly">
           <button
-            onClick={() =>
-              document.getElementById("deleteModal")?.classList.add("hidden")
-            }
+            onClick={onClose}
             className="bg-gray-300 text-gray-700 p-2 rounded-lg hover:cursor-pointer hover:bg-gray-400"
           >
             Cancelar

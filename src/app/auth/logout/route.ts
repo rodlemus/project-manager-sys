@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 export async function GET(request: NextRequest) {
   const supabase = await createClient();
   const data = await supabase.auth.signOut();
+  console.log(data)
   if (data.error) {
     redirect("/error");
   }

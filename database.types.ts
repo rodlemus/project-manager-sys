@@ -313,7 +313,47 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      admin_add_permission: {
+        Args: {
+          a_user_id: string
+          a_permission_id: string
+        }
+        Returns: {
+          id: string
+          permission_id: string
+          user_role_id: string
+        }[]
+      }
+      admin_get_user_permissions: {
+        Args: {
+          a_user_id: string
+        }
+        Returns: {
+          id: string
+          permission: string
+          selected: boolean
+        }[]
+      }
+      admin_get_users: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          username: string
+          state: boolean
+          role: string
+        }[]
+      }
+      admin_remove_permission: {
+        Args: {
+          a_user_id: string
+          a_permission_id: string
+        }
+        Returns: {
+          id: string
+          permission_id: string
+          user_role_id: string
+        }[]
+      }
     }
     Enums: {
       task_status:

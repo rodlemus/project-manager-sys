@@ -1,5 +1,7 @@
+import { getRoleNameByUserId } from "@/app/home/admin/users/querys/getRoleNameByUserId";
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { APP_ROLES } from "../models";
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -49,7 +51,27 @@ export async function updateSession(request: NextRequest) {
     const url = request.nextUrl.clone();
     url.pathname = "/auth/signin";
 
-    //return NextResponse.redirect(url);
+    return NextResponse.redirect(url);
+  }
+
+  if (user) {
+    const role = await getRoleNameByUserId(user.id);
+
+    // si un usuario intenta ingresar al modulo de adminsitrador
+    if (
+      role !== APP_ROLES.ADMIN &&
+      request.nextUrl.pathname.startsWith("/home/admin")
+    ) {
+      return NextResponse.redirect(new URL("/home", request.url));
+    }
+
+    // si el admin intenta ingresar al modulo dedicado solo para usuarios
+    if (
+      role === APP_ROLES.ADMIN &&
+      !request.nextUrl.pathname.includes("/admin")
+    ) {
+      return NextResponse.redirect(new URL("/home/admin", request.url));
+    }
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is.
