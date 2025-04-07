@@ -32,11 +32,13 @@ export default function SignIn() {
               ¿Olvidaste tu contraseña?
             </a>
           </div>
-          <CustomButton text="Iniciar Sesión" type="submit" />
+          <CustomButton width="w-full" text="Iniciar Sesión" type="submit" />
         </form>
         <p className="mt-4 text-center text-sm text-gray-800">
           ¿No tienes una cuenta?{" "}
-          <Link href="/auth/signup" className="text-blue-600 hover:underline">Registrate</Link>
+          <Link href="/auth/signup" className="text-blue-600 hover:underline">
+            Registrate
+          </Link>
         </p>
       </div>
     </div>
